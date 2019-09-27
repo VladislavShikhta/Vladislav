@@ -1,0 +1,50 @@
+Вопрос №1
+У вас SQL база с таблицами:
+1) Users(userId, age)
+2) Purchases (purchaseId, userId, itemId, date)
+3) Items (itemId, price).
+Напишите SQL запросы для расчета следующих метрик:
+А) какую сумму в среднем в месяц тратит:
+- пользователи в возрастном диапазоне от 18 до 25 лет включительно
+SELECT AVG(price)
+FROM Purchases
+LEFT JOIN Users ON Purchases.userId = Users.userId
+LEFT JOIN Items ON Purchases.itemId = Items.itemId
+WHERE age BETWEEN ‘2001-01-01’ AND ‘1994-01-01’
+
+- пользователи в возрастном диапазоне от 26 до 35 лет включительно
+SELECT AVG(price)
+FROM Purchases
+LEFT JOIN Users ON Purchases.userId = Users.userId
+LEFT JOIN Items ON Purchases.itemId = Items.itemId
+WHERE age BETWEEN ‘1993-01-01’ AND ‘1984-01-01’
+
+Б) в каком месяце года выручка от пользователей в возрастном диапазоне 35+ самая большая
+SELECT date, SUM(price)
+FROM Purchases
+LEFT JOIN Users ON Purchases.userId = Users.userId
+LEFT JOIN Items ON Purchases.itemId = Items.itemId
+WHERE age <= '1984-01-01' 
+
+В) какой товар обеспечивает дает наибольший вклад в выручку за последний год
+SELECT price, price / x, itemId, date
+-- SELECT MAX(price)   # находим максимальное значение выручки и обозначим это число за условный "х" 
+-- FROM items
+FROM Purchases
+LEFT JOIN Users ON Purchases.userId = Users.userId
+LEFT JOIN Items ON Purchases.itemId = Items.itemId
+WHERE date >= '2019-01-01'
+ORDER BY price / x DESC
+LIMIT 1
+Г) топ-3 товаров по выручке и их доля в общей выручке за любой год
+SELECT *
+FROM Purchases
+LEFT JOIN Users ON Purchases.userId = Users.userId
+LEFT JOIN Items ON Purchases.itemId = Items.itemId
+-- SELECT MAX(price)   # находим максимальное значение выручки и обозначим это число за условный "х" 
+-- FROM items
+SELECT price, price / x, itemId, date
+FROM Purchases
+ORDER BY price / x DESC, price DESC
+LIMIT 3
+
